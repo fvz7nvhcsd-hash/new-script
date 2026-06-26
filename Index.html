@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOSS SHIKAARI | Advance Prediction Engine</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --accent-cyan: #00ffff;
+            --accent-yellow: #ffcc00;
+            --accent-green: #00ff66;
+            --accent-red: #ff3333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            width: 450px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            border: 1px solid #333;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--accent-yellow), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            color: var(--accent-green);
+            font-size: 14px;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: #444;
+            margin-bottom: 25px;
+        }
+
+        .console-log {
+            background-color: #000;
+            color: var(--accent-cyan);
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+            text-align: left;
+            height: 150px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid #222;
+        }
+
+        .status-box {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .label {
+            color: var(--accent-cyan);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+        }
+
+        .value {
+            color: var(--accent-yellow);
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .result-box {
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 18px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: none;
+            margin-top: 15px;
+        }
+
+        .result-victory {
+            background-color: rgba(0, 255, 102, 0.2);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+            display: block;
+        }
+
+        .result-loss {
+            background-color: rgba(255, 51, 51, 0.2);
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Script Engine</h1>
+        <div class="subtitle">BOSS SHIKAARI | ADVANCE JAVASCRIPT APP</div>
+        <hr>
+
+        <div class="console-log" id="consoleLog">Initializing AI Prediction Engine...</div>
+
+        <div class="status-box">
+            <span class="label">Period</span>
+            <span class="value" id="periodValue">------</span>
+        </div>
+
+        <div class="status-box">
+            <span class="label">Prediction</span>
+            <span class="value" id="predictionValue" style="color: var(--accent-cyan);">------</span>
+        </div>
+
+        <div class="result-box" id="resultBox">Result: <span id="resultText">---</span></div>
+    </div>
+
+    <script>
+// ---------------------------------------
+// API CONFIG
+// ---------------------------------------
+const API_URL = "https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=";
+
+// DOM Elements
+const consoleLog = document.getElementById('consoleLog');
+const periodVal = document.getElementById('periodValue');
+const predVal = document.getElementById('predictionValue');
+const resultBox = document.getElementById('resultBox');
+const resultText = document.getElementById('resultText');
+
+// Logging utility to act like a typewriter screen
+function logMessage(text) {
+    consoleLog.innerHTML += `\n${text}`;
+    consoleLog.scrollTop = consoleLog.scrollHeight;
+}
+
+// ---------------------------------------
+// Prediction Logic (Stable System translated to JS)
+// ---------------------------------------
+function stablePrediction(periodNumber, lastResults, prevPrediction) {
+    if (!lastResults || lastResults.length === 0) {
+        return Math.random() > 0.5 ? "BIG" : "SMALL";
+    }
+
+    const recent = lastResults.slice(-10);
+    const labeled = recent.map(r => parseInt(r) >= 5 ? "BIG" : "SMALL");
+
+    const bigCount = labeled.filter(item => item === "BIG").length;
+    const smallCount = labeled.filter(item => item === "SMALL").length;
+
+    let historyPred;
+    if (bigCount > smallCount) {
+        historyPred = "BIG";
+    } else if (smallCount > bigCount) {
+        historyPred = "SMALL";
+    } else {
+        const lastDigit = parseInt(periodNumber.slice(-1));
+        historyPred = lastDigit >= 5 ? "BIG" : "SMALL";
+    }
+
+    const last3PeriodStr = periodNumber.slice(-3);
+    const last3Period = /^\d+$/.test(last3PeriodStr) ? parseInt(last3PeriodStr) : 0;
+    
+    let digitSum = 0;
+    let temp = last3Period;
+    while (temp > 0) {
+        digitSum += temp % 10;
+        temp = Math.floor(temp / 10);
+    }
+    const periodPred = digitSum % 2 === 0 ? "BIG" : "SMALL";
+
+    let basePred = (historyPred === periodPred) ? historyPred : (Math.random() > 0.5 ? historyPred : periodPred);
+
+    if (prevPrediction && basePred === prevPrediction) {
+        basePred = (basePred === "SMALL") ? "BIG" : "SMALL";
+    }
+
+    if (Math.random() < 0.2) {
+        basePred = (basePred === "SMALL") ? "BIG" : "SMALL";
+    }
+
+    return basePred;
+}
+
+// ---------------------------------------
+// Helper Functions
+// ---------------------------------------
+function getBigSmall(number) {
+    const val = parseInt(number);
+    return isNaN(val) ? "Unknown" : (val >= 5 ? "BIG" : "SMALL");
+}
+
+async function fetchLatest() {
+    try {
+        const ts = Date.now();
+        const response = await fetch(API_URL + ts, {
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Linux; Android 10)",
+                "Accept": "application/json"
+            }
+        });
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        return data?.data?.list || [];
+    } catch (error) {
+        return [];
+    }
+}
+
+// ---------------------------------------
+// Main Application Loop
+// ---------------------------------------
+async function runEngine() {
+    const seenPeriods = new Set();
+    let lastResults = [];
+    let activePrediction = null;
+    let prevPredictionVal = null;
+
+    logMessage("Connecting to API...");
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    logMessage("System Ready.");
+
+    // Loop asynchronously non-blocking using setInterval-like behavior inside a while(true) + await loop
+    while (true) {
+        const data = await fetchLatest();
+        
+        if (data.length === 0) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            continue;
+        }
+
+        const latest = data[0];
+        const currentPeriod = latest.issueNumber || "";
+        const resultNumber = latest.number || "";
+
+        // Push new result to historical array
+        const numParsed = parseInt(resultNumber);
+        if (!isNaN(numParsed)) {
+            lastResults.push(numParsed);
+            if (lastResults.length > 50) lastResults.shift();
+        }
+
+        // Validate active prediction if its period matches the current fetched period
+        if (activePrediction && activePrediction.period === currentPeriod) {
+            const actualResult = getBigSmall(resultNumber);
+            const isWin = activePrediction.prediction === actualResult;
+
+            // Display win/loss outcome on UI
+            resultBox.className = "result-box " + (isWin ? "result-victory" : "result-loss");
+            resultText.innerText = isWin ? "VICTORY!" : "LOSS!";
+            
+            logMessage(`[Result] Period ${currentPeriod}: ${actualResult} | Prediction Was: ${activePrediction.prediction}`);
+            
+            prevPredictionVal = activePrediction.prediction;
+            activePrediction = null;
+        }
+
+        // Generate upcoming prediction if not already set for the period
+        if (!activePrediction && !seenPeriods.has(currentPeriod)) {
+            seenPeriods.add(currentPeriod);
+            
+            const nextPeriod = /^\d+$/.test(currentPeriod) ? (BigInt(currentPeriod) + 1n).toString() : "";
+            const generatedPred = stablePrediction(currentPeriod, lastResults, prevPredictionVal);
+            
+            activePrediction = { period: nextPeriod, prediction: generatedPred };
+            
+            const displayPeriod = nextPeriod.length >= 5 ? nextPeriod.slice(-5) : nextPeriod;
+            
+            // Update UI dashboard
+            periodVal.innerText = displayPeriod;
+            predVal.innerText = generatedPred;
+            resultBox.style.display = "none"; // hide old outcome card
+            
+            logMessage(`[Generated] Period ${displayPeriod} Prediction: ${generatedPred}`);
+        }
+
+        // Wait 3 seconds non-blockingly before polling again
+        await new Promise(resolve => setTimeout(resolve, 3000));
+    }
+}
+
+// Start application
+runEngine();
+
+</script>
+</body>
+</html>
